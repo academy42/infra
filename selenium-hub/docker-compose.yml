@@ -1,0 +1,38 @@
+version: "3"
+
+networks:
+  shared-net:
+    external: true
+
+volumes:
+  selenium-hub-data:
+
+services:
+  selenium-hub:
+    hostname: hub
+    image: selenium/hub:3.14
+    networks:
+      - shared-net
+    ports:
+      - 4444:4444
+    deploy:
+      replicas: 1
+    environment:
+      - NODE_MAX_SESSION=50
+
+  chrome:
+    image: selenium/node-chrome:3.141.59-20210830
+    depends_on:
+      - selenium-hub
+    volumes:
+      - selenium-hub-data:/dev/shm
+    networks:
+      - shared-net
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+      - HUB_HOST=hub
+      - HUB_PORT=4444
+      - NODE_MAX_INSTANCES=50
+      - NODE_MAX_SESSION=50
+    deploy:
+      replicas: 1

@@ -1,0 +1,21 @@
+version: "3"
+
+networks:
+  shared-net:
+    external: true
+
+volumes:
+  mongodb-master-data:
+
+services:
+  mongodb-master:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongodb-master-data:/data/db
+    networks:
+      - shared-net
+    ports:
+      - 27017:27017
